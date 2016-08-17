@@ -1,0 +1,146 @@
+
+
+img{
+  max-width: 100%;
+}
+
+article{
+  padding: 5px;
+  width: 5px;
+  text-align: center;
+}
+
+h4{
+  color: yellow;
+}
+
+h5{
+  text-align: center;
+  font-style: italic;
+  color: yellow;
+}
+
+h1{
+  /*color: yellow;*/
+  color:orange;
+}
+
+
+
+html, body, #container {
+  /*height: 90%;*/
+  max-width: 100%;
+
+}
+
+p{
+  color: yellow;
+}
+
+html{
+  background-size: 100%;
+}
+
+body{
+  background-position: center relative;
+  /*background-color: #222930;*/
+  background: url("https://raw.githubusercontent.com/alexvandesande/ethereum-org/465e2a60d6a3b09021c0fcbcb6b8655277786b22/public/images/homestead-dawn-background@2x.jpg") no-repeat center center fixed;
+  background-size: cover;
+}
+
+
+#resultsForm{
+  padding: 10px;
+  height: 30%;
+  max-width: 50%;
+}
+
+.header{
+  margin-top: 1.5%;
+}
+
+.container{
+  width:90%;
+  max-width: 1500px;
+  display:flex ;
+  flex-flow:row wrap;
+  align-content: space-between;
+
+}
+
+#footer {
+ clear: both;
+ position: relative;
+ height: 3em;
+ margin-top: -3em;
+}
+
+#content {
+ padding-bottom: 3em;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: black;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+li {
+    float: left;
+    max-height: 80%;
+  }
+
+li a {
+    display: block;
+    color: lightblue;
+    text-align: left;
+    padding: 14px 16px;
+    text-decoration: none;
+    max-width: 100%;
+    float:left;
+}
+
+#navBar {
+  margin-bottom: 25px;
+  background-color:black;
+}
+
+body input {
+  width:600px;
+}
+
+li a:hover {
+    background-color: yellow;
+}
+
+.active{
+  color: yellow;
+}
+
+#resultsForm{
+  max-width: 100%;
+  min-width:90%;
+  float:right;
+}
+
+
+/*media queries*/
+@media (max-width: 750px) {
+  html,body, .mainContainer{
+    background: black;
+  }
+  #resultsForm{
+    max-width: 90%;
+    min-width:90%;
+  }
+  #donation-form{
+    max-width: 90%;
+    min-width:90%;
+    margin-left: 0px;
+  }
+}
