@@ -20,16 +20,24 @@ contract social {
     throw;
   }
 
+  modifier noEther() { if(msg.value != 0) throw; _ }
+  modifier signupFee() { if(msg.value != 0.001 ether) throw; _ }
+
   mapping(address => profile) users;
 
   event _createUser(address indexed newUser);
   event _writeMessage(address indexed user, string indexed message);
 
+  function(){
+    throw;
+  }
+
   function social(){
     socialBot = msg.sender;
   }
 
-  function createUser(string name){
+  function signup(string name) signupFee {
+    socialBot.send(msg.value);
     users[msg.sender].name = name;
     users[msg.sender].joinDate = now;
     users[msg.sender].feed.push(name);
