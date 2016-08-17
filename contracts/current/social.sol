@@ -8,11 +8,11 @@ contract social {
   }
 
   address socialBot;
-  uint members;
-  string [] popularFeed;
+  uint memberCount;
+  address [] members;
 
   modifier friendsOnly (address user){
-    for(uint i = 0; i < members; i++){
+    for(uint i = 0; i < memberCount; i++){
       if(users[msg.sender].friends[i] == user){
         _ return;
       }
@@ -42,6 +42,8 @@ contract social {
     users[msg.sender].joinDate = now;
     users[msg.sender].feed.push(name);
     users[msg.sender].friends.push(socialBot);
+    memberCount++;
+    members.push(msg.sender);
     _createUser(msg.sender);
   }
 

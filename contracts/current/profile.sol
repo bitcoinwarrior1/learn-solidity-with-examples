@@ -17,4 +17,17 @@ contract profile is social {
     return latest;
   }
 
+  function getMostPopularFeed() noEther returns(string){
+    uint mostFriends = 0;
+    address mostPopular;
+
+    for(uint i = 0; i < memberCount; i++){
+      if(users[members[i]].friends.length - 1 > mostFriends){
+        mostPopular = members[i];
+        mostFriends = users[members[i]].friends.length - 1;
+      }
+    }
+    return users[mostPopular].feed[users[mostPopular].feed.length - 1];
+  }
+
 }
