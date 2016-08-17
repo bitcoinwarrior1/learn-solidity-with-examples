@@ -1,0 +1,19 @@
+personal.unlockAccount("0xdc85a8429998bd4eef79307e556f70bb70d8caf1","bitcoin");
+var dividendContract = web3.eth.contract([{"constant":false,"inputs":[],"name":"payDividend","outputs":[],"type":"function"},{"constant":false,"inputs":[],"name":"payTax","outputs":[],"type":"function"}]);
+var dividend = dividendContract.new(
+   {
+     from: web3.eth.accounts[0],
+     data: '60606040527321aadccb23591608f06f37fd5cb9aa264ae9fa3c600060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908302179055507389ed07588c0f0ea1156b337273b9326b1c8ac9ab600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff0219169083021790555073dc85a8429998bd4eef79307e556f70bb70d8caf1600260006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908302179055507329a02cd0f340efb6492c535a951fb33270ad1ef7600360006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908302179055506102298061010e6000396000f360606040526000357c0100000000000000000000000000000000000000000000000000000000900480630b6826ca146100445780632912ba5f1461005357610042565b005b6100516004805050610062565b005b61006060048050506101ba565b005b600060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16600060033073ffffffffffffffffffffffffffffffffffffffff163104604051809050600060405180830381858888f1935050505050600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16600060033073ffffffffffffffffffffffffffffffffffffffff163104604051809050600060405180830381858888f1935050505050600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16600060033073ffffffffffffffffffffffffffffffffffffffff163104604051809050600060405180830381858888f19350505050506101b76101ba565b5b565b600360009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1660003073ffffffffffffffffffffffffffffffffffffffff1631604051809050600060405180830381858888f19350505050505b56',
+     gas: 4700000
+   }, function (e, contract){
+    console.log(e, contract);
+    if (typeof contract.address !== 'undefined') {
+         console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);
+    }
+ })
+
+ /*
+ Tx(0xdec6720077d68d7e6642a09ec6cc74f0852dbbb1f446f1a05edf14c6964ffffa)
+ created: 0xebf91f1fb1df67709cc8346abcd9085c34c92a7e
+
+ */
