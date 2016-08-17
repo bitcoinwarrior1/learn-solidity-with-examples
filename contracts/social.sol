@@ -29,7 +29,7 @@ contract social {
   function createUser(string name){
     users[msg.sender].name = name;
     users[msg.sender].joinDate = now;
-    users[msg.sender].feed.push(name + "just joined social");
+    users[msg.sender].feed.push(name);
     users[msg.sender].friends.push(socialBot);
   }
 
@@ -42,14 +42,9 @@ contract social {
     return users[msg.sender].name;
   }
 
-  function getLatestMessage() returns (string) {
-    for(uint i = 0; i < feed.length; i++){
-        string latest = feed[i];
-    }
+  function getLatestMessageFromUser(address person) friendsOnly(msg.sender) returns (string) {
+    string latest = users[person].feed[users[person].feed.length - 1];
     return latest;
   }
 
-  function getAllMessages() returns (string){
-
-  }
 }
