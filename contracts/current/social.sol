@@ -22,6 +22,9 @@ contract social {
 
   mapping(address => profile) users;
 
+  event _createUser(address indexed newUser);
+  event _writeMessage(address indexed user, string indexed message);
+
   function social(){
     socialBot = msg.sender;
   }
@@ -31,10 +34,12 @@ contract social {
     users[msg.sender].joinDate = now;
     users[msg.sender].feed.push(name);
     users[msg.sender].friends.push(socialBot);
+    _createUser(msg.sender);
   }
 
   function writeMessage(string message) returns (bool){
     users[msg.sender].feed.push(message);
+    _writeMessage(msg.sender,message);
     return true;
   }
 
