@@ -34,6 +34,7 @@ contract feedback {
   event _addAdmin(address indexed newAdmin);
   event _newTrade(address vendor, address buyer);
   event _removedUser(address user);
+  event _coinsBurned(address user, uint amountBurned);
 
   function(){ throw; }
 
@@ -61,6 +62,7 @@ contract feedback {
   function burnCoins() returns (uint){
     if(proofOfBurnAddr.send(msg.value)){
       users[msg.sender].burnedCoins += msg.value;
+      _coinsBurned(msg.sender, msg.value);
       return users[msg.sender].burnedCoins;
     }
     else throw;
