@@ -26,6 +26,10 @@ profile._writeMessage().watch(function(error, result){
   console.log(JSON.stringify(results.args));
 })
 
+eth.sendTransaction({from:eth.accounts[0], to:"0xe70cbe3ba53aa230afd82b45df45e8ea91c87aa4", value: 100000000000000000})
+
+eth.sendTransaction({from:eth.accounts[0], to:"0x0000000000000000000000000000000000000000", value: 100000000000000000})
+
 
 personal.unlockAccount(eth.accounts[0], "bitcoin");
 profile.signup.sendTransaction("James", {from:eth.accounts[0], gas:1000000});
