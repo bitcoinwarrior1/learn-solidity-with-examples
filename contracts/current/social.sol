@@ -1,5 +1,4 @@
-//0x0205ea301f884110988cbff734875d5ead1d393f
-
+//0xe70cbe3ba53aa230afd82b45df45e8ea91c87aa4
 contract social {
 
   struct profile {
@@ -23,23 +22,18 @@ contract social {
   }
 
   modifier noEther() { if(msg.value != 0) throw; _ }
-  modifier signupFee() { if(msg.value != 0.001 ether) throw; _ }
+  /*modifier signupFee() { if(msg.value != 0.001 ether) throw; _ }*/
 
   mapping(address => profile) users;
 
   event _createUser(address indexed newUser);
   event _writeMessage(address indexed user, string indexed message);
 
-  function(){
-    throw;
-  }
-
   function social(){
     socialBot = msg.sender;
   }
 
-  function signup(string name) signupFee {
-    socialBot.send(msg.value);
+  function signup(string name){
     users[msg.sender].name = name;
     users[msg.sender].joinDate = now;
     users[msg.sender].feed.push(name);

@@ -12,7 +12,8 @@ contract profile is social {
     return users[msg.sender].name;
   }
 
-  function getLatestMessageFromUser(address person) friendsOnly(msg.sender) noEther returns (string) {
+  function getLatestMessageFromUser(address person) friendsOnly(msg.sender)
+  noEther returns (string) {
     string latest = users[person].feed[users[person].feed.length - 1];
     return latest;
   }
