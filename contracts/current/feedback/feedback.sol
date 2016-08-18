@@ -1,7 +1,6 @@
 contract feedback {
 
   address [] admins;
-  address proofOfBurnAddr = 0x0000000000000000000000000000000000000000;
 
   modifier adminOnly() {
     for(uint i = 0; i < admins.length; i++){
@@ -53,19 +52,6 @@ contract feedback {
   function addAdmin(address newAdmin) adminOnly returns (address){
     admins.push(newAdmin);
     _addAdmin(newAdmin);
-  }
-
-  function showBurnedCoins(address user) returns (uint){
-    return users[user].burnedCoins;
-  }
-
-  function burnCoins() returns (uint){
-    if(proofOfBurnAddr.send(msg.value)){
-      users[msg.sender].burnedCoins += msg.value;
-      _coinsBurned(msg.sender, msg.value);
-      return users[msg.sender].burnedCoins;
-    }
-    else throw;
   }
 
   function trade(address vendor, address recipient) paid {
