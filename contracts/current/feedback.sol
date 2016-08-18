@@ -1,7 +1,7 @@
 contract feedback {
 
   address [] admins;
-  address proofOfBurnAddr = "0x0000000000000000000000000000000000000000";
+  address proofOfBurnAddr = 0x0000000000000000000000000000000000000000;
 
   modifier adminOnly() {
     for(uint i = 0; i < admins.length; i++){
@@ -77,7 +77,7 @@ contract feedback {
   function giveFeedback(address vendor, bool isPositive) paid {
     for(uint i = 0; i < users[vendor].traders.length; i++){
       if(users[vendor].traders[i] == msg.sender
-      && users[vendor].giveFeedback == false){
+      && users[vendor].givenFeedback[i] == false){
         if(isPositive){
           users[vendor].positive ++;
            _positiveFeedback(vendor);
