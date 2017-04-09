@@ -1,11 +1,11 @@
 contract cointoss
 {
-    uint hashOfPlayer1 = 0;
-    uint hashOfPlayer2 = 0;
+    bytes32 hashOfPlayer1 = 0;
+    bytes32 hashOfPlayer2 = 0;
     address player1;
     address player2;
-    uint p1Guess = 0;
-    uint p2Guess = 0;
+    bytes32 p1Guess = 0;
+    bytes32 p2Guess = 0;
     uint expiryTimeStamp;
 
     modifier playerOnly()
@@ -40,7 +40,7 @@ contract cointoss
         expiryTimeStamp = block.timestamp + 600000; //10 minutes
     }
 
-    function submitHash(uint hash) playerOnly
+    function submitHash(bytes32 hash) playerOnly
     {
         if(msg.sender == player1)
             hashOfPlayer1 = hash;
@@ -48,14 +48,14 @@ contract cointoss
             hashOfPlayer2 = hash;
     }
 
-    function checkHashAgainstNumber(uint n, int playerNum) hashesHaveBeenSubmitted returns (bool)
+    function checkHashAgainstNumber(bytes32 n, int playerNum) hashesHaveBeenSubmitted returns (bool)
     {
-        if(playerNum == 1 && uint(sha3(n)) == hashOfPlayer1)
+        if(playerNum == 1 && sha3(n) == hashOfPlayer1)
         {
             p1Guess = n;
             return true;
         }
-        else if(uint(sha3(n)) == hashOfPlayer2)
+        else if(sha3(n) == hashOfPlayer2)
         {
             p2Guess = n;
             return true;
@@ -65,7 +65,7 @@ contract cointoss
 
     function payWinner() numbersHaveBeenSubmitted
     {
-        if( p1Guess % 2 == 0)
+        if(uint(p1Guess) % 2 == 0)
             player1.send(this.balance);
         else
             player2.send(this.balance);
