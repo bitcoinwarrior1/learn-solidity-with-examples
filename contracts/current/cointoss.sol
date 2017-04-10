@@ -37,7 +37,7 @@ contract cointoss
     {
         player1 = p1;
         player2 = p2;
-        expiryTimeStamp = block.timestamp + 600000; //10 minutes
+        expiryTimeStamp = block.timestamp + 600; //10 minutes
     }
 
     // function hashSomething(bytes32 n) returns (bytes32)
