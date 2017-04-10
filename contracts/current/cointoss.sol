@@ -40,6 +40,12 @@ contract cointoss
         expiryTimeStamp = block.timestamp + 600000; //10 minutes
     }
 
+    // function hashSomething(bytes32 n) returns (bytes32)
+    // {
+    //     //dont do this on live deploy!!!
+    //     return sha3(n);
+    // }
+
     function submitHash(bytes32 hash) playerOnly
     {
         if(msg.sender == player1)
@@ -48,9 +54,9 @@ contract cointoss
             hashOfPlayer2 = hash;
     }
 
-    function checkHashAgainstNumber(bytes32 n, int playerNum) hashesHaveBeenSubmitted returns (bool)
+    function checkHashAgainstNumber(bytes32 n) hashesHaveBeenSubmitted returns (bool)
     {
-        if(playerNum == 1 && sha3(n) == hashOfPlayer1)
+        if(sha3(n) == hashOfPlayer1)
         {
             p1Guess = n;
             return true;
