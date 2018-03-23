@@ -8,7 +8,7 @@ contract spreadfunds
         require(num == addresses.length);
         for(uint i = 0; i < addresses.length; i++)
         {
-            addresses[0].transfer(amt);    
+            addresses[i].transfer(amt);    
         }
     }
 }
