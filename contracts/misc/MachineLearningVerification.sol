@@ -23,6 +23,8 @@ contract MachineLearningVerification
     bool claimed = false;
     address[] contributors;
     address burnAddress = 0x000000000000000000000000000000000000dEaD;
+    address winner;
+    string winningFormula;
     
     modifier notExpired() 
     {
@@ -62,7 +64,7 @@ contract MachineLearningVerification
     //TODO use reputation or make it impossible for the creator to profit? 
     //will use the latter first, maybe something else will come along
     //TODO prevent miner from cheating with this input, might require zksnarks
-    function verifyInput(bytes32 outputHash) notExpired notClaimed public
+    function verifyInput(bytes32 outputHash, string formula) notExpired notClaimed public
     {
         //need to hash the data and then hash it again with contract address
         //else you would have to submit all the data and hash it (expensive)
@@ -70,13 +72,23 @@ contract MachineLearningVerification
         bytes32 hashOfValue = keccak256(outputHash, this);
         if(hashOfValue == hashOfCorrectOutput) 
         {
-            msg.sender.transfer(this.balance);
             claimed = true;
+            winningFormula = formula;
         }
     }
     
+    //if author is satisifed with the winning forumla he can approve the payout
+    //author should be able to reproduce valid outputs using the formula
+    //and potentially be able to apply it to other data sets 
+    function payoutWinner() public
+    {
+        require(msg.sender == author);
+        require(winner != address(0));
+        winner.transfer(this.balance);
+    }
+    
     function addContribution() payable public 
-        isSmallerThanAuthorContribution(msg.value) notExpired
+        isSmallerThanAuthorContribution(msg.value) notExpired notClaimed
     {
         bool contributor = false;
         for(uint i = 0; i < contributors.length; i++)
