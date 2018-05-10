@@ -18,9 +18,11 @@ contract MachineLearningVerification
     bytes32 hashOfCorrectOutput;
     mapping(address => uint) contributions; 
     uint expiry; 
+    //contribution must be burned to prevent author gaming the system
     uint authorContribution; 
     bool claimed = false;
     address[] contributors;
+    address burnAddress = 0x000000000000000000000000000000000000dEaD;
     
     modifier notExpired() 
     {
@@ -50,6 +52,7 @@ contract MachineLearningVerification
         hashOfCorrectOutput = outputHash;
         expiry = expiryTimestamp;
         authorContribution = msg.value;
+        burnAddress.transfer(msg.value);
     }
     
     //if the correct hash is produced from the data of the correct output in a model
@@ -59,9 +62,12 @@ contract MachineLearningVerification
     //TODO use reputation or make it impossible for the creator to profit? 
     //will use the latter first, maybe something else will come along
     //TODO prevent miner from cheating with this input, might require zksnarks
-    function verifyInput(bytes32 data) notExpired notClaimed public
+    function verifyInput(bytes32 outputHash) notExpired notClaimed public
     {
-        bytes32 hashOfValue = keccak256(data);
+        //need to hash the data and then hash it again with contract address
+        //else you would have to submit all the data and hash it (expensive)
+        //also should be specific to the contract
+        bytes32 hashOfValue = keccak256(outputHash, this);
         if(hashOfValue == hashOfCorrectOutput) 
         {
             msg.sender.transfer(this.balance);
@@ -84,6 +90,13 @@ contract MachineLearningVerification
         }
     }
     
+    function increaseAuthorContribution() payable public notExpired 
+    {
+        require(msg.sender == author);
+        authorContribution += msg.value;
+        burnAddress.transfer(msg.value);
+    }
+    
     function endContract() public 
     {
         require(block.timestamp > expiry || claimed); 
@@ -92,7 +105,6 @@ contract MachineLearningVerification
             //refund contributors
             contributors[i].transfer(contributions[contributors[i]]);
         }
-        //refund author's contribution if not found
         selfdestruct(author);
     }
     
