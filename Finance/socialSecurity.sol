@@ -12,17 +12,20 @@ contract socialSecurity {
      uncleSam = msg.sender;
    }
 
-   function addRecipient(uint age, address user) uncleSamOnly{
+   function addRecipient(uint age, address user) uncleSamOnly
+   {
      balances[user] = 0;
      blockTime[user] = now + ((65 - age) * blockTimePerYear);
      //how many blocks they need to wait to get payment
    }
 
-   function addContribution(){
-     balances[msg.sender] += msg.value;
+   function addContribution()
+   {
+      balances[msg.sender] += msg.value;
    }
 
-   function withdrawPension(){
+   function withdrawPension()
+   {
      if(now >= blockTime[msg.sender]){
        balances[msg.sender] = balances[msg.sender] * 110 / 100; //pays out 10% of total contributions
        if(msg.sender.send(balances[msg.sender])) balances[msg.sender] = 0;

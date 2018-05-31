@@ -1,15 +1,15 @@
 import "accounting";
 
-contract shares is accounting{
-
+contract shares is accounting
+{
   address admin;
   mapping (address => uint256) shareholders;
   modifier adminOnly() { if(msg.sender != admin) throw; }
 
   function dividend(uint256 amount) adminOnly {
-    /*for(shareholder of shareholders){
+    for(shareholder of shareholders){
       shareholder.send(amount);
-    }*/
+    }
   }
 
   function sellStock(uint256 amount) returns (uint256){

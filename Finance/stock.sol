@@ -12,7 +12,8 @@ contract stock {
 		shares[user] = amount;
 	}
 
-	function payDividend(address shareholder, uint amount){
+	function payDividend(address shareholder, uint amount)
+	{
 		uint balance = this.balance;
 		shareholder.send(balance * shares[shareholder] / 100);
 		tax(shareholder, amount * 33 / 100);

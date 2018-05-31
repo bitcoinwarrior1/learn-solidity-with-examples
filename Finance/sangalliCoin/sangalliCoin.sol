@@ -3,6 +3,7 @@ contract sangalliCoin {
   address sangalli;
   mapping (address => uint) balances;
   uint256 id;
+  uint256 cap;
 
   modifier sangalliOnly{ if(msg.sender != sangalli) throw; _ }
   modifier noEther { if(msg.value > 0) throw; _ }
@@ -10,9 +11,10 @@ contract sangalliCoin {
   event _denyWithdrawal(uint256 indexed id, address indexed customer, uint256 indexed amount);
   event _successfulWithdrawal(uint256 indexed id, address indexed customer, uint256 indexed amount);
 
-  function deposit(){
-    if(this.balance > 10000000000000000000) throw;
+  function deposit()
+  {
     //puts in a IPO cap on investment and token issuance. Must trade on market after that
+    if(this.balance > cap) throw;
     if(msg.value > 0) balances[msg.sender] += msg.value;
     else throw;
   }
@@ -37,7 +39,9 @@ contract sangalliCoin {
      }
   }
 
-  function sangalliCoin(){
+  function sangalliCoin(uint256 limitOnFunds)
+  {
+      cap = limitOnFunds;
       sangalli = msg.sender;
       id = 0;
   }
