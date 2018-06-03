@@ -4,6 +4,7 @@ pragma solidity ^0.4.17;
 pragma experimental ABIEncoderV2;
 //the interface for such intergration contracts as the users will define their own 
 //implementations
+//TODO add attestation verification model, offline signatures for approved parties can be used too
 contract IntergrationERC 
 {
     address admin;
