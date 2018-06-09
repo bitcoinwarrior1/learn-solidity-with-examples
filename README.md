@@ -5,8 +5,8 @@ A repo full of smart contracts written in Solidity
 This repo is intended to be used for education but anyone is free to use it as they wish and make suggestions and pull requests.
 
 # AlphaWallet apps - A simple, easy to use and secure crypto wallet
-Android: https://play.google.com/store/apps/details?id=io.stormbird.wallet
-iOS: https://itunes.apple.com/us/app/alphawallet/id1358230430?mt=8
+### Android: https://play.google.com/store/apps/details?id=io.stormbird.wallet
+### iOS: https://itunes.apple.com/us/app/alphawallet/id1358230430?mt=8
 
 # AlphaWallet contract(s) and XML(s):
 https://github.com/alpha-wallet/contracts
