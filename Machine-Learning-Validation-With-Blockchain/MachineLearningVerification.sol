@@ -19,26 +19,15 @@ contract MachineLearningVerification
 {
     address author;
     bytes32 hashOfCorrectOutput;
-    mapping(address => uint) contributions;
     uint expiry;
-    //contribution must be burned to prevent author gaming the system
     uint authorContribution;
     bool claimed = false;
-    address[] contributors;
-    address burnAddress = 0x000000000000000000000000000000000000dEaD;
     address winner;
     string winningFormula;
 
     modifier notExpired()
     {
         if (block.timestamp > expiry) revert();
-        _;
-    }
-
-    modifier isSmallerThanAuthorContribution(uint newContribution)
-    {
-        uint newSum = this.balance + newContribution;
-        if (newSum > authorContribution) revert();
         _;
     }
 
@@ -57,15 +46,10 @@ contract MachineLearningVerification
         hashOfCorrectOutput = outputHash;
         expiry = expiryTimestamp;
         authorContribution = msg.value;
-        burnAddress.transfer(msg.value);
     }
 
     //if the correct hash is produced from the data of the correct output in a model
     //then the user gets ether.
-    //this has issues, what stops the creator (who knows the correct output manually)
-    //from taking all the ether?
-    //TODO use reputation or make it impossible for the creator to profit?
-    //will use the latter first, maybe something else will come along
     //TODO prevent miner from cheating with this input, might require zksnarks
     function verifyInput(bytes32 outputHash, string formula) notExpired notClaimed public
     {
@@ -92,37 +76,21 @@ contract MachineLearningVerification
         selfdestruct(winner);
     }
 
-    function addContribution() payable public
-        isSmallerThanAuthorContribution(msg.value) notExpired notClaimed
-    {
-        bool contributor = false;
-        for(uint i = 0; i < contributors.length; i++)
-        {
-            if(msg.sender == contributors[i]) contributor = true;
-        }
-        contributions[msg.sender] += msg.value;
-        if(contributor == false)
-        {
-            contributors.push(msg.sender);
-        }
-    }
-
     function increaseAuthorContribution() payable public notExpired
     {
         require(msg.sender == author);
         authorContribution += msg.value;
-        burnAddress.transfer(msg.value);
     }
 
     function endContract() public notExpired
     {
         require(!claimed);
-        for(uint i = 0; i < contributors.length; i++)
-        {
-            //refund contributors
-            contributors[i].transfer(contributions[contributors[i]]);
-        }
         selfdestruct(author);
+    }
+    
+    function getBountyAmount() public returns(uint) 
+    {
+        return this.balance;
     }
 
 }
