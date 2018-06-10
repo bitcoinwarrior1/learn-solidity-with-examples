@@ -14,16 +14,29 @@
     Model that successfully classifies the data will produce the correct hash and be able to take the prize.
 */
 
+//This is the interface for the applicant to implement with their own solution
+contract MachineLearningSolutionAttempt 
+{
+    address applicant;
+    
+    constructor() public { applicant = msg.sender; }
+    
+    //attempt to solve the model here by implementing a mode
+    //return the output of the model and the applicant address
+    //if it works properly then the applicant address is compensated
+    function model(bytes32 data) public returns (bytes32 output, address applicantPayoutAddress);
+}
+
 pragma solidity ^0.4.17;
 contract MachineLearningVerification
 {
     address author;
-    bytes32 hashOfCorrectOutput;
+    bytes32 modelData;
     uint expiry;
     uint authorContribution;
     bool claimed = false;
     address winner;
-    string winningFormula;
+    address winningContract;
 
     modifier notExpired()
     {
@@ -40,40 +53,32 @@ contract MachineLearningVerification
         _;
     }
 
-    constructor(bytes32 outputHash, uint expiryTimestamp) public payable
+    constructor(bytes32 data, uint expiryTimestamp) public payable
     {
         author = msg.sender;
-        hashOfCorrectOutput = outputHash;
+        modelData = data;
         expiry = expiryTimestamp;
         authorContribution = msg.value;
     }
 
     //if the correct hash is produced from the data of the correct output in a model
     //then the user gets ether.
-    //TODO prevent miner from cheating with this input, might require zksnarks
-    function verifyInput(bytes32 outputHash, string formula) notExpired notClaimed public
+    //contract calls the applicants model from another contract to validate
+    function verifyInput(address applicantContract) notExpired notClaimed public
     {
-        //need to hash the data and then hash it again with contract address
-        //else you would have to submit all the data and hash it (expensive)
-        //also should be specific to the contract
-        bytes32 hashOfValue = keccak256(outputHash, this);
+        //instantiate the applicants solution attempt
+        //check it outputs the correct solution
+        MachineLearningSolutionAttempt mlAttempt;
+        mlAttempt = MachineLearningSolutionAttempt(applicantContract);
+        var (output, applicant) = mlAttempt.model(modelData);
+        bytes32 hashOfValue = keccak256(abi.encodePacked(output));
+        bytes32 hashOfCorrectOutput = keccak256(abi.encodePacked(modelData));
         if(hashOfValue == hashOfCorrectOutput)
         {
             claimed = true;
-            winningFormula = formula;
+            winningContract = applicantContract;
+            applicant.send(this.balance);
         }
-    }
-
-    //if author is satisifed with the winning forumla he can approve the payout
-    //author should be able to reproduce valid outputs using the formula
-    //and potentially be able to apply it to other data sets
-    function payoutWinner() public
-    {
-        require(msg.sender == author);
-        require(winner != address(0));
-        require(claimed);
-        //winner gets all the ether in the contract and the contract ends
-        selfdestruct(winner);
     }
 
     function increaseAuthorContribution() payable public notExpired
@@ -88,7 +93,7 @@ contract MachineLearningVerification
         selfdestruct(author);
     }
     
-    function getBountyAmount() public returns(uint) 
+    function getBountyAmount() public view returns(uint) 
     {
         return this.balance;
     }
