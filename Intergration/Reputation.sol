@@ -6,6 +6,7 @@ pragma solidity ^0.4.17;
 contract Reputation
 {
     uint feedbackSubmissionFee;
+    address burnAddress = 0x000000000000000000000000000000000000dEaD;
     //true = positive, false = negative
     struct Feedback
     {
@@ -16,14 +17,15 @@ contract Reputation
 
     mapping(address => Feedback[]) ratings;
 
-    constructor(uint feedbackFee)
+    constructor(uint feedbackFee) public
     {
         feedbackFee = feedbackSubmissionFee;
     }
 
-    function submitFeedback(Feedback feedback, address recipientOfFeedback) payable
+    function submitFeedback(Feedback feedback, address recipientOfFeedback) payable public
     {
         require(msg.value == feedbackSubmissionFee);
+        burnAddress.transfer(msg.value);
         ratings[recipientOfFeedback].push(feedback);
     }
 
@@ -49,5 +51,4 @@ contract Reputation
             }
         }
     }
-
 }
