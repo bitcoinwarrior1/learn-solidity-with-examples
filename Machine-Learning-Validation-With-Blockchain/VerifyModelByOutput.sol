@@ -48,6 +48,11 @@ contract VerifyModelByOutput
         var (positive, negative) = reputation.getNumberOfPositiveAndNegativeReviews(owner);
         require(positive > 20 && positive > negative * 5);
     }
+    
+    function getAssignmentWebsite() returns(string) 
+    {
+        return assignmentInformationWebsiteURL;
+    }
 
     function topupBounty() public payable
     {

@@ -1,10 +1,10 @@
 # Solidity-Contract-Examples
 A repo full of smart contracts written in Solidity
 
-# Purpose
+## Purpose
 This repo is intended to be used for education but anyone is free to use it as they wish and make suggestions and pull requests.
 
-# AlphaWallet apps - A simple, easy to use and secure crypto wallet
+## AlphaWallet- A simple, easy to use and secure crypto wallet with Ethereum, ERC20 and ERC875 compatibility. 
 ### Android: https://play.google.com/store/apps/details?id=io.stormbird.wallet
 ### iOS: https://itunes.apple.com/us/app/alphawallet/id1358230430?mt=8
 
