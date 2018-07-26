@@ -3,16 +3,22 @@ import "https://github.com/James-Sangalli/Solidity-Contract-Examples/blob/eth-2-
 pragma solidity ^0.4.0;
 contract BTC2ETH is BTC
 {
-    address _btcrelayAddress = 0x41f274c0023f83391DE4e0733C609DF5a124c3d4;
+    address _btcrelayAddress;
     bytes[] claimedTxs; 
     address admin;
     uint16 ether2BitcoinRate;
     bytes20 bitcoinAddress;
     
-    constructor(bytes20 btcAddress) public
+    constructor(bytes20 btcAddress, address btcrelayAddress) public
     {
         admin = msg.sender;
         bitcoinAddress = btcAddress;
+        _btcrelayAddress = btcrelayAddress;
+        if(_btcrelayAddress == address(0)) 
+        {
+            //default mainnet
+            _btcrelayAddress = 0x41f274c0023f83391DE4e0733C609DF5a124c3d4;
+        }
     }
     
     //admin tops up the contract here
