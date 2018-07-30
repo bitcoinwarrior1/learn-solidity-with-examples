@@ -1,43 +1,44 @@
 import "https://github.com/ethereum/btcrelay/blob/develop/btcrelay.se" as BtcRelay;
 import "https://github.com/James-Sangalli/Solidity-Contract-Examples/blob/eth-2-btc-swap/Finance/bitcoin-to-ethereum-swap/BtcParser.sol" as BtcParser;
+
 pragma solidity ^0.4.0;
-contract BTC2ETH is BTC
+contract BTC2ETH //is BTC
 {
     address _btcrelayAddress;
-    bytes[] claimedTxs; 
+    bytes[] claimedTxs;
     address admin;
     uint16 ether2BitcoinRate;
     bytes20 bitcoinAddress;
-    
+
     constructor(bytes20 btcAddress, address btcrelayAddress) public
     {
         admin = msg.sender;
         bitcoinAddress = btcAddress;
         _btcrelayAddress = btcrelayAddress;
-        if(_btcrelayAddress == address(0)) 
+        if(_btcrelayAddress == address(0))
         {
             //default mainnet
             _btcrelayAddress = 0x41f274c0023f83391DE4e0733C609DF5a124c3d4;
         }
     }
-    
+
     //admin tops up the contract here
-    function topupContract() public payable 
+    function topupContract() public payable
     {
         require(msg.sender == admin);
     }
-    
+
     function setEther2BitcoinPrice(uint16 rate) public
     {
         require(msg.sender == admin);
         ether2BitcoinRate = rate;
     }
-    
+
     function getCurrentRate() public view returns(uint16)
     {
         return ether2BitcoinRate;
     }
-    
+
     // rawTransaction - raw bytes of the transaction
     // transactionIndex - transaction's index within the block, as int256
     // merkleSibling - array of the sibling hashes comprising the Merkle proof, as int256[]
@@ -46,9 +47,9 @@ contract BTC2ETH is BTC
     //of the corresponding ether address
     //the same private key can claim the ether as was used to send the bitcoin
     function bitcoin2EthereumSwap(
-        bytes rawTransaction, 
-        int256 transactionIndex, 
-        int256[] merkleSibling, 
+        bytes rawTransaction,
+        int256 transactionIndex,
+        int256[] merkleSibling,
         int256 blockHash
     ) public
     {
@@ -57,7 +58,7 @@ contract BTC2ETH is BTC
         //of the bitcoin sender and casting it to the address
         //pay out the amount of eth to the address applied by the daily rate
         bytes32 hashedRawTx = keccak256(rawTransaction);
-        for(uint i = 0; i < claimedTxs.length; i++) 
+        for(uint i = 0; i < claimedTxs.length; i++)
         {
             require(claimedTxs[i] != hashedRawTx);
         }
@@ -65,14 +66,14 @@ contract BTC2ETH is BTC
         bytes4 relayFunction = bytes4(keccak256(
             "verify(bytes rawTransaction,int256 transactionIndex,int256[] merkleSibling,int256 blockHash)"
         ));
-        
+
         BtcRelay btcrelay = new BtcRelay.at(_btcrelayAddress);
         BtcParser btcParser = new BtcParser;
-        
-        uint256 response = btcrelay.verifyTx.call(
-            relayFunction, 
-            rawTransaction, 
-            transactionIndex, 
+
+        int256 response = btcrelay.verifyTx.call(
+            relayFunction,
+            rawTransaction,
+            transactionIndex,
             merkleSibling,
             blockHash
         );
@@ -81,12 +82,17 @@ contract BTC2ETH is BTC
         require(address1 == bitcoinAddress || address2 == bitcoinAddress);
         bytes20 senderPubKey = btcParser.parseOutputScript(
             rawTransaction,
-            0, 
+            0,
             rawTransaction.length
         );
         address sender = address(keccak256(abi.encodePacked(senderPubKey)));
-        sender.transfer(amt1 * ether2BitcoinRate);
+        uint amountToTransfer = amt1 * ether2BitcoinRate;
+        uint feeToRelayer = amountToTransfer / 100;
+        sender.transfer(amountToTransfer - feeToRelayer);
         claimedTxs.push(keccak256(rawTransaction));
+        address relayerOfBlock = btcrelay.getFeeRecipient(blockHash);
+        //added incentive for block relayers
+        relayerOfBlock.transfer(feeToRelayer);
     }
-    
+
 }
