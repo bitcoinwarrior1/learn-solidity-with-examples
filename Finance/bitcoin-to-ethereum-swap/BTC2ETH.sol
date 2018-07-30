@@ -2,7 +2,7 @@ import "https://github.com/ethereum/btcrelay/blob/develop/btcrelay.se" as BtcRel
 import "https://github.com/James-Sangalli/Solidity-Contract-Examples/blob/eth-2-btc-swap/Finance/bitcoin-to-ethereum-swap/BtcParser.sol" as BtcParser;
 
 pragma solidity ^0.4.0;
-contract BTC2ETH //is BTC
+contract BTC2ETH
 {
     address _btcrelayAddress;
     bytes[] claimedTxs;
@@ -87,12 +87,17 @@ contract BTC2ETH //is BTC
         );
         address sender = address(keccak256(abi.encodePacked(senderPubKey)));
         uint amountToTransfer = amt1 * ether2BitcoinRate;
+        //3% fee in total
         uint feeToRelayer = amountToTransfer / 100;
-        sender.transfer(amountToTransfer - feeToRelayer);
+        uint feeToAdmin = amountToTransfer / 50;
+        uint deduction = feeToRelayer + feeToAdmin;
+        sender.transfer(amountToTransfer - deduction);
         claimedTxs.push(keccak256(rawTransaction));
         address relayerOfBlock = btcrelay.getFeeRecipient(blockHash);
         //added incentive for block relayers
         relayerOfBlock.transfer(feeToRelayer);
+        //admin gets 2% fee for providing service and liquidity
+        admin.transfer(feeToAdmin);
     }
 
 }
