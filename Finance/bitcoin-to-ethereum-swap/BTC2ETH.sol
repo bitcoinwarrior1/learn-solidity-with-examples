@@ -63,10 +63,6 @@ contract BTC2ETH
             require(claimedTxs[i] != hashedRawTx);
         }
 
-        bytes4 relayFunction = bytes4(keccak256(
-            "verify(bytes rawTransaction,int256 transactionIndex,int256[] merkleSibling,int256 blockHash)"
-        ));
-
         BtcRelay btcrelay = new BtcRelay.at(_btcrelayAddress);
         BtcParser btcParser = new BtcParser;
 
