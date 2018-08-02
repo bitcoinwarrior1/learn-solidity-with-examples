@@ -1,6 +1,7 @@
 ## BTC to ETH secure cross chain swap
 
-### Purpose: To allow anyone to send bitcoin to our address and receive the corresponding amount of ether (ether, classic or tokens) as set by the market maker. The sender will be called Alice, the receiver and market maker, Bob. 
+### Purpose 
+To allow anyone to send bitcoin to our address and receive the corresponding amount of ether (ether, classic or tokens) as set by the market maker. The sender will be called Alice, the receiver and market maker, Bob. 
 
 ### Introduction
 
