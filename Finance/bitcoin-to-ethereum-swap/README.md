@@ -4,7 +4,7 @@
 
 Allow anyone to seamlessely swap their Bitcoin for Ethereum in a trustless and secure way. 
 
-In this short description, Alice will be the buyer/sender, Bob the market maker and Carol, Bob's assistant. 
+In this short description: Alice will be the buyer/sender, Bob the market maker and Carol; Bob's assistant. 
 
 ### Introduction
 
