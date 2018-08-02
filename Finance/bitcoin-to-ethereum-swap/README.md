@@ -48,7 +48,7 @@ Note: Since Bitcoin and Ethereum use the same private key algorithm, it is possi
 - If it has happened then the smart contract derives the corresponding ethereum address by taking the public key from the transaction and hashing it into an ethereum address. 
 - The smart contract sends the ether to Alice and adds the transaction hash to an array to ensure that the transaction is not resubmitted 
 
-### Note on BtcRelay relayers:
+### Note on BtcRelay relayers
 
 One of the biggest issues with BTCRelay is providing incentives for ethereum nodes to relay Bitcoin headers, this can be mitigated by Bob if he decides to allocate a portion of the transaction as a fee back to the relayer. 
 
