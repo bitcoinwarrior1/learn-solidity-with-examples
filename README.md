@@ -2,9 +2,9 @@
 A repo full of smart contracts written in Solidity
 
 ## Purpose
-This repo is intended to be used for education but anyone is free to use it as they wish and make suggestions and pull requests.
+This repo is intended to be used for education but anyone is free to use it as they wish and make suggestions and/or pull requests.
 
-## AlphaWallet- A simple, easy to use and secure crypto wallet with Ethereum, ERC20 and ERC875 compatibility. 
+## AlphaWallet - An easy and secure Ethereum wallet with ERC Support
 ### Android: https://play.google.com/store/apps/details?id=io.stormbird.wallet
 ### iOS: https://itunes.apple.com/us/app/alphawallet/id1358230430?mt=8
 
