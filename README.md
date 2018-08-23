@@ -1,4 +1,4 @@
-# Solidity-Contract-Examples
+# learn solidity with examples!
 A repo full of smart contracts written in Solidity
 
 ## Purpose
