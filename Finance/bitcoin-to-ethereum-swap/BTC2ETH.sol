@@ -88,15 +88,10 @@ contract BTC2ETH is BtcParser, btcrelayInterface
         uint256 blockHash) internal
     {
         require(msg.sender == address(this));
-        //3% fee in total
-        uint feeToRelayer = amountToTransfer / 100;
         uint feeToAdmin = amountToTransfer / 50;
-        uint deduction = feeToRelayer + feeToAdmin;
-        sender.transfer(amountToTransfer - deduction);
+        sender.transfer(amountToTransfer - feeToAdmin);
         claimedTxs.push(keccak256(rawTransaction));
         address relayerOfBlock = btcrelay.getFeeRecipient(blockHash);
-        //added incentive for block relayers
-        relayerOfBlock.transfer(feeToRelayer);
         //admin gets 2% fee for providing service and liquidity
         admin.transfer(feeToAdmin);
     }

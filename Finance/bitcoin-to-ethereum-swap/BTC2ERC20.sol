@@ -13,10 +13,9 @@ contract BTC2ERC20 is BtcParser, btcrelayInterface, ERC20
     btcrelayInterface btcrelay;
     BtcParser btcParser = new BtcParser();
     mapping (address => uint) balances;
-    uint feeToRelayer;
     uint feeToAdmin;
 
-    constructor(bytes32 btcAddress, address btcrelayAddress, uint relayFee, uint adminFee) public
+    constructor(bytes32 btcAddress, address btcrelayAddress, uint adminFee) public
     {
         admin = msg.sender;
         bitcoinAddress = btcAddress;
@@ -27,7 +26,6 @@ contract BTC2ERC20 is BtcParser, btcrelayInterface, ERC20
             _btcrelayAddress = 0x41f274c0023f83391DE4e0733C609DF5a124c3d4;
         }
         btcrelay = btcrelayInterface(_btcrelayAddress);
-        feeToRelayer = relayFee;
         feeToAdmin = adminFee;
     }
 
@@ -87,15 +85,11 @@ contract BTC2ERC20 is BtcParser, btcrelayInterface, ERC20
         uint256 blockHash) internal
     {
         require(msg.sender == address(this));
-        uint deduction = feeToRelayer + feeToAdmin;
-        sender.transfer(amountToTransfer - deduction);
+        sender.transfer(amountToTransfer - feeToAdmin);
         claimedTxs.push(keccak256(rawTransaction));
-        address relayerOfBlock = btcrelay.getFeeRecipient(blockHash);
-        //added incentive for block relayers
-        balances[relayOfBlock] += feeToRelayer;
         //admin gets fee for providing service and liquidity
         balances[admin] += feeToAdmin;
-        balances[sender] += amountToTransfer - deduction;
+        balances[sender] += amountToTransfer - feeToAdmin;
     }
 
     function checkClaims(bytes32[] claimTxs, bytes32 hashedRawTx) internal
