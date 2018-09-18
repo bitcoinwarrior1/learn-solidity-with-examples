@@ -100,7 +100,7 @@
 
 pragma solidity ^0.4.11;
 // parse a raw bitcoin transaction byte array
-contract BTC {
+contract BtcParser {
     // Convert a variable integer into something useful and return it and
     // the index to after it.
     function parseVarInt(bytes txBytes, uint pos) returns (uint, uint) {
