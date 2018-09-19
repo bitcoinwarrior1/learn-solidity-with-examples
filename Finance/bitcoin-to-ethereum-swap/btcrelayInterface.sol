@@ -8,7 +8,7 @@
 pragma solidity ^0.4.0;
 contract btcrelayInterface
 {
-    bytes4 relayDestination = bytes4(keccak256("processTransaction(bytes,uint256) returns(int256)"));
+    bytes4 relayDestination = bytes4(keccak256("processTransaction(bytes,uint256)returns(int256)"));
     uint256 heaviestBlock;
     //highest score among all blocks (so far)
     uint256 highScore;
@@ -27,7 +27,7 @@ contract btcrelayInterface
     ) public payable returns(uint256){}
 
     function relayTx(
-        bytes32 txBytes,
+        string txBytes,
         bytes32[] siblings,
         bytes32 txBlockHash,
         address contractAddress

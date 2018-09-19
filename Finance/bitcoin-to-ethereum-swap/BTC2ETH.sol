@@ -2,7 +2,9 @@ import "./btcrelayInterface" as btcrelayInterface;
 import "./BtcParser" as BtcParser;
 
 pragma solidity ^0.4.0;
-//ropsten: 0x574f21d3201eD7f63bf765aE857A85bc84529064
+// "0x0000000000000005BE086099E0FF00FC0CFBC77A8DD09375AE889FBD259A0367", "0x41f274c0023f83391DE4e0733C609DF5a124c3d4"
+//ropsten: 0xcF95521F5961b37c01C168F34683bAA4e91B9962
+//mainnet: 0x34c425c5dA9800e89CDAE1b33D665c27de91fADe
 contract BTC2ETH is BtcParser, btcrelayInterface
 {
     address _btcrelayAddress;
@@ -27,7 +29,7 @@ contract BTC2ETH is BtcParser, btcrelayInterface
     }
 
     //admin tops up the contract here
-    function topupContract() public payable
+    function() public payable
     {
         require(msg.sender == admin);
     }
