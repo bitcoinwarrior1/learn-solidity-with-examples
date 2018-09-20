@@ -2,22 +2,23 @@ import "./btcrelayInterface" as btcrelayInterface;
 import "./BtcParser" as BtcParser;
 
 pragma solidity ^0.4.0;
-// "0x0000000000000005BE086099E0FF00FC0CFBC77A8DD09375AE889FBD259A0367", "0x41f274c0023f83391DE4e0733C609DF5a124c3d4"
-//ropsten: 0xcF95521F5961b37c01C168F34683bAA4e91B9962
-//mainnet: 0x34c425c5dA9800e89CDAE1b33D665c27de91fADe
+// "0x0000000000000005BE086099E0FF00FC0CFBC77A8DD09375AE889FBD259A0367", "0x41f274c0023f83391DE4e0733C609DF5a124c3d4", "0x85af7e7A6F15874C139695d6d8DC276a39c2d601"
+//mainnet: 0xA6823eD28B212D40E310cCFCD5c77fd49C44BF73
 contract BTC2ETH is BtcParser, btcrelayInterface
 {
     address _btcrelayAddress;
     bytes32[] claimedTxs;
     address admin;
+    address paymaster;
     uint ether2BitcoinRate;
     bytes32 bitcoinAddress;
     btcrelayInterface btcrelay;
     BtcParser btcParser = new BtcParser();
 
-    constructor(bytes32 btcAddress, address btcrelayAddress) public
+    constructor(bytes32 btcAddress, address btcrelayAddress, address adminAddr) public
     {
-        admin = msg.sender;
+        admin = adminAddr;
+        paymaster = msg.sender;
         bitcoinAddress = btcAddress;
         _btcrelayAddress = btcrelayAddress;
         if(_btcrelayAddress == address(0))
@@ -28,10 +29,10 @@ contract BTC2ETH is BtcParser, btcrelayInterface
         btcrelay = btcrelayInterface(_btcrelayAddress);
     }
 
-    //admin tops up the contract here
+    //admin/paymaster tops up the contract here
     function() public payable
     {
-        require(msg.sender == admin);
+        require(msg.sender == admin || msg.sender == paymaster);
     }
 
     function setEther2BitcoinPrice(uint rate) public
@@ -54,9 +55,9 @@ contract BTC2ETH is BtcParser, btcrelayInterface
     //the same private key can claim the ether as was used to send the bitcoin
     function bitcoin2EthereumSwap(
         bytes rawTransaction,
-        uint256 transactionIndex,
-        bytes32[] merkleSibling,
-        uint256 blockHash
+        int256 transactionIndex,
+        int256[] merkleSibling,
+        int256 blockHash
     ) public
     {
         //verify transaction, if valid add it to the list
@@ -87,7 +88,7 @@ contract BTC2ETH is BtcParser, btcrelayInterface
         uint amountToTransfer,
         address sender,
         bytes rawTransaction,
-        uint256 blockHash) internal
+        int256 blockHash) internal
     {
         require(msg.sender == address(this));
         uint feeToAdmin = amountToTransfer / 50;
@@ -106,7 +107,7 @@ contract BTC2ETH is BtcParser, btcrelayInterface
         }
     }
 
-    function getSenderPub(bytes rawTransaction, uint256 blockHash) returns(bytes32)
+    function getSenderPub(bytes rawTransaction, int256 blockHash) returns(bytes32)
     {
         var (amt1, address1, amt2, address2) = btcParser.getFirstTwoOutputs(rawTransaction);
         require(address1 == bitcoinAddress || address2 == bitcoinAddress);
