@@ -3,18 +3,18 @@ import "./BtcParser" as BtcParser;
 
 pragma solidity ^0.4.0;
 // "0x0000000000000005BE086099E0FF00FC0CFBC77A8DD09375AE889FBD259A0367", "0x85af7e7A6F15874C139695d6d8DC276a39c2d601", 30, 100
-//mainnet: 0xd4775c9AbfB88e0e64011d564ae6A1C120826464
+//mainnet: 0x30B87c4fe7F12A955E9d44EafB16DceF18B1bF41
 contract BTC2ETH is BtcParser, btcrelayInterface
 {
     address _btcrelayAddress;
     bytes32[] claimedTxs;
     address admin;
-    address paymaster; 
+    address paymaster;
     uint ether2BitcoinRate;
     bytes20 bitcoinAddress;
     btcrelayInterface btcrelay;
     BtcParser btcParser = new BtcParser();
-    uint feeRatio;
+    uint public feeRatio;
 
     constructor(bytes20 btcAddress, address adminAddr, uint initialRate, uint initialFeeRatio) public
     {
@@ -26,6 +26,17 @@ contract BTC2ETH is BtcParser, btcrelayInterface
         btcrelay = btcrelayInterface(_btcrelayAddress);
         ether2BitcoinRate = initialRate;
         feeRatio = initialFeeRatio;
+    }
+
+    function withdrawFunds(uint amount) public
+    {
+        require(msg.sender == admin);
+        admin.transfer(amount);
+    }
+
+    function getFeeRatio() public returns(uint)
+    {
+        return feeRatio;
     }
 
     //admin/paymaster tops up the contract here
@@ -81,7 +92,7 @@ contract BTC2ETH is BtcParser, btcrelayInterface
         );
 
         require(response > 0); //returns 0 if nothing found
-        bytes32 senderPubKey = getSenderPub(rawTransaction, blockHash);
+        bytes20 senderPubKey = getSenderPub(rawTransaction, blockHash);
         address sender = address(keccak256(senderPubKey));
         var (amt1, address1, amt2, address2) = btcParser.getFirstTwoOutputs(rawTransaction);
         uint amountToTransfer = amt1 * ether2BitcoinRate;
@@ -120,6 +131,12 @@ contract BTC2ETH is BtcParser, btcrelayInterface
             rawTransaction.length
         );
         return senderPubKey;
+    }
+
+    function endContract() public
+    {
+        require(msg.sender == admin);
+        selfdestruct(admin);
     }
 
 }
