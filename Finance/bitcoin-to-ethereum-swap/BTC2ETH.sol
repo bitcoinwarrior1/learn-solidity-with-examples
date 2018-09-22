@@ -2,31 +2,30 @@ import "./btcrelayInterface" as btcrelayInterface;
 import "./BtcParser" as BtcParser;
 
 pragma solidity ^0.4.0;
-// "0x0000000000000005BE086099E0FF00FC0CFBC77A8DD09375AE889FBD259A0367", "0x41f274c0023f83391DE4e0733C609DF5a124c3d4", "0x85af7e7A6F15874C139695d6d8DC276a39c2d601"
-//mainnet: 0xA6823eD28B212D40E310cCFCD5c77fd49C44BF73
+// "0x0000000000000005BE086099E0FF00FC0CFBC77A8DD09375AE889FBD259A0367", "0x85af7e7A6F15874C139695d6d8DC276a39c2d601", 30, 100
+//mainnet: 0xd4775c9AbfB88e0e64011d564ae6A1C120826464
 contract BTC2ETH is BtcParser, btcrelayInterface
 {
     address _btcrelayAddress;
     bytes32[] claimedTxs;
     address admin;
-    address paymaster;
+    address paymaster; 
     uint ether2BitcoinRate;
-    bytes32 bitcoinAddress;
+    bytes20 bitcoinAddress;
     btcrelayInterface btcrelay;
     BtcParser btcParser = new BtcParser();
+    uint feeRatio;
 
-    constructor(bytes32 btcAddress, address btcrelayAddress, address adminAddr) public
+    constructor(bytes20 btcAddress, address adminAddr, uint initialRate, uint initialFeeRatio) public
     {
         admin = adminAddr;
         paymaster = msg.sender;
         bitcoinAddress = btcAddress;
-        _btcrelayAddress = btcrelayAddress;
-        if(_btcrelayAddress == address(0))
-        {
-            //default mainnet
-            _btcrelayAddress = 0x41f274c0023f83391DE4e0733C609DF5a124c3d4;
-        }
+        //default mainnet
+        _btcrelayAddress = 0x41f274c0023f83391DE4e0733C609DF5a124c3d4;
         btcrelay = btcrelayInterface(_btcrelayAddress);
+        ether2BitcoinRate = initialRate;
+        feeRatio = initialFeeRatio;
     }
 
     //admin/paymaster tops up the contract here
@@ -39,6 +38,12 @@ contract BTC2ETH is BtcParser, btcrelayInterface
     {
         require(msg.sender == admin);
         ether2BitcoinRate = rate;
+    }
+
+    function setFeeRation(uint newFeeRatio) public
+    {
+        require(msg.sender == admin);
+        feeRatio = newFeeRatio;
     }
 
     function getCurrentRate() public view returns(uint)
@@ -77,7 +82,7 @@ contract BTC2ETH is BtcParser, btcrelayInterface
 
         require(response > 0); //returns 0 if nothing found
         bytes32 senderPubKey = getSenderPub(rawTransaction, blockHash);
-        address sender = address(keccak256(abi.encodePacked(senderPubKey)));
+        address sender = address(keccak256(senderPubKey));
         var (amt1, address1, amt2, address2) = btcParser.getFirstTwoOutputs(rawTransaction);
         uint amountToTransfer = amt1 * ether2BitcoinRate;
         makeTransfers(amountToTransfer, sender, rawTransaction, blockHash);
@@ -90,12 +95,10 @@ contract BTC2ETH is BtcParser, btcrelayInterface
         bytes rawTransaction,
         int256 blockHash) internal
     {
-        require(msg.sender == address(this));
-        uint feeToAdmin = amountToTransfer / 50;
+        uint feeToAdmin = amountToTransfer / feeRatio;
         sender.transfer(amountToTransfer - feeToAdmin);
         claimedTxs.push(keccak256(rawTransaction));
-        address relayerOfBlock = btcrelay.getFeeRecipient(blockHash);
-        //admin gets 2% fee for providing service and liquidity
+        //admin gets a fee for providing service and liquidity
         admin.transfer(feeToAdmin);
     }
 
@@ -107,11 +110,11 @@ contract BTC2ETH is BtcParser, btcrelayInterface
         }
     }
 
-    function getSenderPub(bytes rawTransaction, int256 blockHash) returns(bytes32)
+    function getSenderPub(bytes rawTransaction, int256 blockHash) returns(bytes20)
     {
         var (amt1, address1, amt2, address2) = btcParser.getFirstTwoOutputs(rawTransaction);
-        require(address1 == bitcoinAddress || address2 == bitcoinAddress);
-        bytes32 senderPubKey = btcParser.parseOutputScript(
+        require(address1 == bitcoinAddress); //first output goes to us, second is change
+        bytes20 senderPubKey = btcParser.parseOutputScript(
             rawTransaction,
             0,
             rawTransaction.length
