@@ -98,7 +98,6 @@
 // Addresses are the scriptHash with a version prefix of 5, encoded as
 // Base58check. These addresses begin with a '3'.
 
-pragma solidity ^0.4.11;
 // parse a raw bitcoin transaction byte array
 contract BtcParser {
     // Convert a variable integer into something useful and return it and
@@ -223,7 +222,7 @@ contract BtcParser {
     // takes a 'stop' argument which sets the maximum number of
     // outputs to scan through. stop=0 => scan all.
     function scanOutputs(bytes txBytes, uint pos, uint stop) public
-             returns (uint[], uint[], uint[], uint) 
+             returns (uint[], uint[], uint[], uint)
     {
         uint n_outputs;
         uint halt;
@@ -293,4 +292,18 @@ contract BtcParser {
             return;
         }
     }
+
+    function getPubKeyFromTx(bytes txBytes) returns(bytes)
+    {
+        bytes pubKey;
+        uint index = 0;
+        for(uint i = 112; i < 177; i++)
+        {
+            pubKey[index] = txBytes[i];
+            index++;
+        }
+        return pubKey;
+    }
+
+
 }
