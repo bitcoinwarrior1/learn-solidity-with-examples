@@ -293,17 +293,39 @@ contract BtcParser {
         }
     }
 
+    // function getPubKeyFromTx(bytes txBytes) returns(bytes)
+    // {
+    //     bytes pubKey;
+    //     uint index = 0;
+    //     for(uint i = 112; i < 177; i++)
+    //     {
+    //         pubKey[index] = txBytes[i];
+    //         index++;
+    //     }
+    //     return pubKey;
+    // }
+
+    //if multisig, it will just grab the first pubkey
     function getPubKeyFromTx(bytes txBytes) returns(bytes)
     {
-        bytes pubKey;
-        uint index = 0;
-        for(uint i = 112; i < 177; i++)
+        uint pos = 0;
+        bytes pubkey;
+        for(uint i = 0; i < txBytes.length; i++)
         {
-            pubKey[index] = txBytes[i];
+            //byte with value 41 is used to show the start of the pubkey in the raw tx
+            if(txBytes[i] == 0x41)
+            {
+                pos = i;
+                break;
+            }
+        }
+        uint index = 0;
+        for(i = pos; i < pos + 65; i++)
+        {
+            pubkey[index] = txBytes[i];
             index++;
         }
-        return pubKey;
+        return pubkey;
     }
-
 
 }
