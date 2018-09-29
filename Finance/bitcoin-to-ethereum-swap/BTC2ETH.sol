@@ -14,6 +14,13 @@ contract BTC2ETH is BtcParser
     bytes20 public bitcoinAddress;
     BtcParser public btcParser = new BtcParser();
     uint public feeRatio;
+    event relayedTransactionInfo(
+        bytes rawTransaction,
+        uint256 transactionHash,
+        address sender,
+        bytes senderPubKey,
+        uint btcAmountSent
+    );
 
     constructor(bytes20 btcAddress, address adminAddr, uint initialRate, uint initialFeeRatio) public
     {
@@ -88,6 +95,7 @@ contract BTC2ETH is BtcParser
         bytes memory senderPubKey = getPubKeyFromTx(rawTransaction);
         address sender = address(keccak256(senderPubKey));
         var (amt1, address1, amt2, address2) = btcParser.getFirstTwoOutputs(rawTransaction);
+        relayedTransactionInfo(rawTransaction, transactionHash, sender, senderPubKey, amt1);
         require(address1 == bitcoinAddress); //first output goes to us, second is change
         uint amountToTransfer = amt1 * ether2BitcoinRate;
         uint feeToAdmin = amountToTransfer / feeRatio;
