@@ -292,7 +292,8 @@ contract BtcParser {
             return;
         }
     }
-
+    //NOTE: Only supports segwit txs
+    //https://bitcoin.stackexchange.com/questions/79723/where-is-the-pubkey-for-segwit-inputs
     //if multisig, it will just grab the first pubkey
     function getPubKeyFromTx(bytes txBytes) returns(bytes)
     {
@@ -300,15 +301,15 @@ contract BtcParser {
         bytes pubkey;
         for(uint i = 0; i < txBytes.length; i++)
         {
-            //byte with value 0x04 is used to show the start of the pubkey in the raw tx
-            if(txBytes[i] == 0x04)
+            //byte with value 0x21 is used to show the start of the pubkey in the raw tx
+            if(txBytes[i] == 0x21)
             {
-                pos = i;
+                pos = i + 1;
                 break;
             }
         }
         uint index = 0;
-        for(i = pos; i < pos + 65; i++)
+        for(i = pos; i < pos + 33; i++)
         {
             pubkey[index] = txBytes[i];
             index++;
@@ -316,4 +317,25 @@ contract BtcParser {
         return pubkey;
     }
 
+    function getSegtwitSignature(bytes txBytes) returns(bytes)
+    {
+        uint pos = 0;
+        bytes signature;
+        for(uint i = 0; i < txBytes.length; i++)
+        {
+            //byte with value 0x47 is used to show the start of the signature in the raw tx
+            if(txBytes[i] == 0x47)
+            {
+                pos = i + 1;
+                break;
+            }
+        }
+        uint index = 0;
+        for(i = pos; i < pos + 71; i++)
+        {
+            signature[index] = txBytes[i];
+            index++;
+        }
+        return signature;
+    }
 }

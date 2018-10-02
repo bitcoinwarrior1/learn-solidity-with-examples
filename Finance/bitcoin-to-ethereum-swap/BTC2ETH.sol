@@ -3,7 +3,7 @@ import "./BtcParser" as BtcParser;
 
 pragma solidity ^0.4.0;
 // "0xbe086099e0ff00fc0cfbc77a8dd09375ae889fbd", "0x85af7e7A6F15874C139695d6d8DC276a39c2d601", 30, 100
-//mainnet: 0xB649A551202D89c51f20eEd94545C7bA47be9841
+// Mainnet: 0xF371828DdCC21c8b0017Ef2BCc4E3c0375D2191f
 contract BTC2ETH is BtcParser
 {
     address public btcrelayAddress;
@@ -19,7 +19,8 @@ contract BTC2ETH is BtcParser
         uint256 transactionHash,
         address sender,
         bytes senderPubKey,
-        uint btcAmountSent
+        uint btcAmountSent,
+        bytes20 output1Address
     );
 
     constructor(bytes20 btcAddress, address adminAddr, uint initialRate, uint initialFeeRatio) public
@@ -95,7 +96,7 @@ contract BTC2ETH is BtcParser
         bytes memory senderPubKey = getPubKeyFromTx(rawTransaction);
         address sender = address(keccak256(senderPubKey));
         var (amt1, address1, amt2, address2) = btcParser.getFirstTwoOutputs(rawTransaction);
-        relayedTransactionInfo(rawTransaction, transactionHash, sender, senderPubKey, amt1);
+        relayedTransactionInfo(rawTransaction, transactionHash, sender, senderPubKey, amt1, address1);
         require(address1 == bitcoinAddress); //first output goes to us, second is change
         uint amountToTransfer = amt1 * ether2BitcoinRate;
         uint feeToAdmin = amountToTransfer / feeRatio;
