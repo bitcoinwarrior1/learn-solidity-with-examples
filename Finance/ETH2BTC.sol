@@ -108,6 +108,8 @@ contract ETH2BTC is BtcParser
     ) public payable
     {
         require(msg.value > 0);
+        //in case user doesn't set the refund address
+        if(refundAddr == address(0)) refundAddr = msg.sender;
         //fees can be done by using a slightly above market rate
         uint btcAmount = msg.value * etherToBitcoinRate;
         //two weeks from order, should be processed well before this date but includes a margin of safety
