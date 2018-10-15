@@ -120,6 +120,7 @@ contract BTC2ETH is BtcParser
         return claimedTxs;
     }
 
+    //TODO remove once sure the contract is fine
     function endContract() public
     {
         require(msg.sender == admin);
