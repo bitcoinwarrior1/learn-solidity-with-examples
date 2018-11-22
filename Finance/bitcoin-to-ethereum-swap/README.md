@@ -6,6 +6,9 @@ Allow anyone to seamlessely swap their Bitcoin for Ethereum in a trustless and s
 
 In this short description: Alice will be the buyer/sender, Bob the market maker and Carol; Bob's assistant. 
 
+### test it out
+Click [here](https://james-sangalli.github.io/btcrelay/examples/mainnetSwap.html)
+
 ### Introduction
 
 BtcRelay is a service invented by Joseph Chow with the intention to allow Bitcoin SPV verification to be done inside an ethereum smart contract. 

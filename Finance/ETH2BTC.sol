@@ -1,3 +1,5 @@
+//would rather import it and redeploy it anew then rely on the deployed version as it is possible to change the address
+//to an attackers one
 import "./btcrelayInterface" as btcrelayInterface;
 import "./BtcParser" as BtcParser;
 

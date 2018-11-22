@@ -23,7 +23,12 @@ contract BTC2ETH is BtcParser
         bytes20 output1Address
     );
 
-    constructor(bytes20 btcAddress, address adminAddr, uint initialRate, uint initialFeeRatio) public
+    constructor(
+        bytes20 btcAddress,
+        address adminAddr,
+        uint initialRate,
+        uint initialFeeRatio
+    ) public
     {
         admin = adminAddr;
         paymaster = msg.sender;
