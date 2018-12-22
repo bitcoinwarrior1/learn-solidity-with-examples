@@ -2,6 +2,7 @@
 //as it allows you to destroy a custom amount of storage by bulk 
 //rather than all or nothing with selfdestruct and a single tx for each
 //deletion (this allows bulk deletion for each tx)
+//it also allows for arbitrary data storage
 //mainnet: 0x3EFEB5D4e04eB7BB9c8007038cD5D9042bd9bC3E
 contract GasSpeculator
 {
