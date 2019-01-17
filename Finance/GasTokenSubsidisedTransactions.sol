@@ -1,3 +1,4 @@
+pragma solidity 0.4.24;
 //implement empty functions just for signatures which then call the actual deployed contracts
 contract GasTokenInterface {
     function freeFromUpTo(address from, uint256 value) public returns (uint256 freed) {}
@@ -66,26 +67,26 @@ contract GasTokenSubsidisedTransactions {
         address contractToCall, 
         uint value
     ) internal returns (ERCInterface) {
-        //ensure user pays enough for the gas token so that we profit and they get cheaper transactions
-        uint numberOfTokensToConsume = value / (gasPerToken * costOfToken);
         //free up the token at the set price and make the transaction significatly cheaper
         //see notes here: https://github.com/projectchicago/gastoken/blob/master/contract/GST2_ETH.sol#L157 on this calculation
-        gasTokenInterface.freeFromUpTo(this, numberOfTokensToConsume);
+        gasTokenInterface.freeFromUpTo(this, value);
         return ERCInterface(contractToCall);
     }
     
-    // Requires approval to move funds on behalf of user as most contracts don't use tx.origin
-    // This can still be effective for people like exchanges with high volume
+    // This can still be effective for people like exchanges with high volume who 
+    // can move their funds to the contract and use the contract for transactions
     function transferFromDelegate(
         address to,
         uint amount, 
-        address contractToCall
-    ) public payable {
+        address contractToCall,
+        uint gasTokensToConsume
+    ) public {
+        require(msg.sender == admin);
         ERCInterface contractErc = getERCContract(
             contractToCall, 
-            msg.value
+            gasTokensToConsume
         );
-        contractErc.transferFrom(msg.sender, to, amount);
+        contractErc.transferFrom(this, to, amount);
     }
     
     //much cheaper to withdraw on occasion 
