@@ -8,7 +8,7 @@ contract erc20 {
 
 contract erc20Swap {
 
-    mapping (bytes32 => address) claimedSignatures;
+    mapping (bytes32 => address) claimedSignatureHashes;
 
     //requires that the seller has enabled an allowance to the contract
     function swapTokenForNativeCurrency(
@@ -23,9 +23,10 @@ contract erc20Swap {
         address seller = ecrecover(message, v, r, s);
         erc20 erc20Contract = erc20(erc20ContractAddress);
         require(erc20Contract.transferFrom(seller, msg.sender, amount));
-        require(claimedSignatures[r] != seller);
+        bytes32 hashedSig = keccak256(abi.encodePacked(v, r, s));
+        require(claimedSignatureHashes[hashedSig] != seller);
         //don't allow the deal to be done multiple times
-        claimedSignatures[r] = seller;
+        claimedSignatureHashes[hashedSig] = seller;
     }
 
 }
