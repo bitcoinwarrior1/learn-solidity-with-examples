@@ -7,20 +7,19 @@ contract erc20 {
 }
 
 contract erc20Swap {
-    
+
     mapping (bytes32 => address) claimedSignatures;
-    
+
     //requires that the seller has enabled an allowance to the contract
     function swapTokenForNativeCurrency(
-        uint expiry, 
-        uint price, 
+        uint expiry,
         uint amount,
         address erc20ContractAddress,
         uint8 v, 
-        bytes32 r, 
+        bytes32 r,
         bytes32 s
     ) public payable returns(bool) {
-        bytes32 message = formMessage(amount, expiry, price, erc20ContractAddress);
+        bytes32 message = formMessage(amount, expiry, msg.value, erc20ContractAddress);
         address seller = ecrecover(message, v, r, s);
         erc20 erc20Contract = erc20(erc20ContractAddress);
         require(erc20Contract.allowance(seller, address(this)) >= amount);
@@ -29,7 +28,7 @@ contract erc20Swap {
         claimedSignatures[r] = seller;
         return erc20Contract.transferFrom(seller, msg.sender, amount);
     }
-    
+
     function formMessage(
         uint amount,
         uint expiry,
@@ -51,6 +50,6 @@ contract erc20Swap {
         }
         return keccak256(message);
     }
-    
-    
+
+
 }
