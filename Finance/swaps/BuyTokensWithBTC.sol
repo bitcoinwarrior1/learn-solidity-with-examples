@@ -8,7 +8,6 @@
 
 import "https://raw.githubusercontent.com/James-Sangalli/learn-solidity-with-examples/master/Finance/swaps/bitcoin-to-ethereum-swap/BtcParser.sol";
 import "https://raw.githubusercontent.com/summa-tx/bitcoin-spv/master/solidity/contracts/ViewSPV.sol";
-pragma experimental ABIEncoderV2;
 pragma solidity ^0.5.10;
 
 interface ERC20Mint {
@@ -42,11 +41,11 @@ contract BuyTokensWithBTC {
         to the same key that sent the btc. TODO make it work with a specified recipient address for minted coins
     */
     function proveBTCTransactionAndMint(
-        bytes rawTransaction,
+        bytes memory rawTransaction,
         uint256 transactionHash,
         bytes32 _txid,
         bytes32 _merkleRoot,
-        bytes _proof,
+        bytes29 _proof,
         uint _index
     ) public returns (bool) {
         require(deadline > block.timestamp);
@@ -54,9 +53,9 @@ contract BuyTokensWithBTC {
         require(ViewSPV.prove(_txid, _merkleRoot, _proof, _index));
         bytes memory senderPubKey = BtcParser.getPubKeyFromTx(rawTransaction);
         //create ethereum address from bitcoin pubkey
-        address senderAddress = address(keccak256(senderPubKey));
+        address senderAddress = address(bytes20(keccak256(senderPubKey)));
         //one would be change, the other the amount actually sent
-        var (amt1, address1, amt2, address2) = BtcParser.getFirstTwoOutputs(rawTransaction);
+        (uint amt1, bytes20 address1, uint amt2, bytes20 address2) = BtcParser.getFirstTwoOutputs(rawTransaction);
         if(address1 == bitcoinAddressOfTokenSeller) {
             uint amountToMint = amt1 * rate;
             _mintTokens(senderAddress, amountToMint);
