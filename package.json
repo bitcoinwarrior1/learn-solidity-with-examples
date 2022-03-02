@@ -1,0 +1,34 @@
+{
+  "name": "learn-solidity-with-examples",
+  "version": "1.0.0",
+  "description": "A repo full of solidity smart contracts",
+  "main": "index.js",
+  "scripts": {
+    "test": "dapp test",
+    "hardhat-test": "npx hardhat test",
+    "lint:fix": "prettier . --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/James-Sangalli/learn-solidity-with-examples.git"
+  },
+  "author": "James Sangalli",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/James-Sangalli/learn-solidity-with-examples/issues"
+  },
+  "homepage": "https://github.com/James-Sangalli/learn-solidity-with-examples#readme",
+  "dependencies": {
+    "hardhat": "^2.8.4",
+    "ethers": "^5.5.4"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-waffle": "^2.0.2",
+    "@typechain/hardhat": "^4.0.0",
+    "typechain": "^5.0.0",
+    "chai": "^4.3.6",
+    "prettier": "^2.5.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.19"
+  }
+}
