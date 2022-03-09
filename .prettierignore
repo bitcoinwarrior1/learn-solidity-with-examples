@@ -1,0 +1,4 @@
+typechain/*
+.git/*
+.github/*
+artifacts/*
