@@ -129,3 +129,9 @@ contract ETH2BTC {
         delete orders[orderOwner][pos];
     }
 }
+
+contract ETH2BTCFuzz is ETH2BTC {
+    function echidna_fuzz_setEtherToBitcoinRate() public view returns(bool) {
+        return etherToBitcoinRate != 2**256 - 1;
+    }
+}
